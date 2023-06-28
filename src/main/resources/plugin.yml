@@ -1,0 +1,4 @@
+name: MixCore
+version: '${project.version}'
+main: mix.core.Main
+api-version: 1.19
