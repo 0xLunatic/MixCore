@@ -123,10 +123,9 @@ public class InteractListener implements Listener {
         if (lore == null) {
             return;
         }
-
-        if (hasLoreContaining(lore, "Active Element: Water")) {
-            if (health < (0.1 * maxHealth)) {
-                victim.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 60, 2));
+        if (hasLoreContaining(lore, "§fActive Element: §8Water")) {
+            if (health <= (0.1 * maxHealth)) {
+                victim.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 120, 2));
             }
         }
     }
