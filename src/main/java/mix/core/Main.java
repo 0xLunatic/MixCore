@@ -2,6 +2,7 @@ package mix.core;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import mix.core.EventListener.InteractListener;
 import mix.core.EventListener.WheatListener;
 import mix.core.heads.HeadList;
 import org.bukkit.*;
@@ -30,6 +31,7 @@ public final class Main extends JavaPlugin {
         System.out.println("Survival Mix Core by Mornov Enabled!");
         System.out.println("=======================================");
         getServer().getPluginManager().registerEvents(new WheatListener(this), this);
+        getServer().getPluginManager().registerEvents(new InteractListener(this), this);
 
         Bukkit.getScheduler().runTask(this, () -> {
             World world = Bukkit.getWorld("spawn"); // Replace "s3" with the actual name of your world
