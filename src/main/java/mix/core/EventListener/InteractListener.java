@@ -86,17 +86,17 @@ public class InteractListener implements Listener {
             switch (element) {
                 case "§8Water":
                     lore.set(loreLine, ChatColor.WHITE + "Active Element: " + ChatColor.DARK_GRAY + "Fire");
-                    player.sendActionBar(ChatColor.GREEN + "Active Element: " + ChatColor.RED + "Fire");
+                    player.sendMessage(ChatColor.GREEN + "Active Element: " + ChatColor.RED + "Fire");
                     player.playSound(player, Sound.BLOCK_BEACON_POWER_SELECT, 10, 2);
                     break;
                 case "§8Fire":
                     lore.set(loreLine, ChatColor.WHITE + "Active Element: " + ChatColor.DARK_GRAY + "Ice");
-                    player.sendActionBar(ChatColor.GREEN + "Active Element: " + ChatColor.AQUA + "Ice");
+                    player.sendMessage(ChatColor.GREEN + "Active Element: " + ChatColor.AQUA + "Ice");
                     player.playSound(player, Sound.BLOCK_BEACON_POWER_SELECT, 10, 2);
                     break;
                 case "§8Ice":
                     lore.set(loreLine, ChatColor.WHITE + "Active Element: " + ChatColor.DARK_GRAY + "Water");
-                    player.sendActionBar(ChatColor.GREEN + "Active Element: " + ChatColor.BLUE + "Water");
+                    player.sendMessage(ChatColor.GREEN + "Active Element: " + ChatColor.BLUE + "Water");
                     player.playSound(player, Sound.BLOCK_BEACON_POWER_SELECT, 10, 2);
                     break;
             }
@@ -152,6 +152,10 @@ public class InteractListener implements Listener {
             return;
         }
 
+        if (!(event.getDamager() instanceof Player)) {
+            return;
+        }
+
         LivingEntity target = (LivingEntity) event.getEntity();
         Player player = (Player) event.getDamager();
         ItemStack blade = player.getInventory().getItemInMainHand();
@@ -178,6 +182,7 @@ public class InteractListener implements Listener {
                 }
             }
             player.sendMessage(ChatColor.WHITE + "You hit " + ChatColor.AQUA + target.getName() + ChatColor.WHITE + " with Fire Elementalist");
+            target.setFireTicks(60);
             new BukkitRunnable() {
                 int ticksRemaining = 6; // 0.5 seconds = 6 ticks (20 ticks per second)
                 @Override
@@ -206,6 +211,10 @@ public class InteractListener implements Listener {
             return;
         }
 
+        if (!(event.getDamager() instanceof Player)) {
+            return;
+        }
+
         LivingEntity victim = (LivingEntity) event.getEntity();
         Player player = (Player) event.getDamager();
         ItemStack blade = player.getInventory().getItemInMainHand();
@@ -227,6 +236,7 @@ public class InteractListener implements Listener {
         if (hasLoreContaining(lore, "§fActive Element: §8Ice")) {
             if (Math.random() <= 0.1) {
                 victim.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 100, 4));
+                victim.setFreezeTicks(140);
                 player.sendMessage(ChatColor.WHITE + "You hit " + ChatColor.AQUA + victim.getName() + ChatColor.WHITE + " with Ice Elementalist");
                 if (victim instanceof Player) {
                     victim.sendMessage(ChatColor.WHITE + "You slowed down by " + ChatColor.AQUA + player.getName() + ChatColor.WHITE + " using Ice Elementalist");
