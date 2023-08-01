@@ -2,3 +2,10 @@ name: MixCore
 version: '${project.version}'
 main: mix.core.Main
 api-version: 1.19
+commands:
+  tpsbar:
+    description: tpsbar
+    usage: /tpsbar
+  pity:
+    description: pity command
+    usage: /<command> [set|add|reload|save|check]

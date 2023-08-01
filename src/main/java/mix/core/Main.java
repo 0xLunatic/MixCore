@@ -2,14 +2,20 @@ package mix.core;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import mix.core.Command.PityTabCompleter;
+import mix.core.Data.DataManager;
+import mix.core.Data.PlaceholderManager;
 import mix.core.EventListener.InteractListener;
 import mix.core.EventListener.WheatListener;
+import mix.core.EventListener.WishingWellListener;
 import mix.core.heads.HeadList;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.boss.BossBar;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -18,20 +24,35 @@ import org.bukkit.util.Vector;
 
 import java.io.*;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public final class Main extends JavaPlugin {
 
+    private DataManager dataManager;
+    private WishingWellListener wishingWellListener;
+
+    public BossBar bossBar;
+    private static final Map<Player, BossBar> playerBossBars = new HashMap<>();
+
     @Override
     public void onEnable() {
-        // Plugin startup logic
         System.out.println("=======================================");
         System.out.println("Survival Mix Core by Mornov Enabled!");
         System.out.println("=======================================");
+
+        wishingWellListener = new WishingWellListener(this);
+
         getServer().getPluginManager().registerEvents(new WheatListener(this), this);
         getServer().getPluginManager().registerEvents(new InteractListener(this), this);
+        getServer().getPluginManager().registerEvents(wishingWellListener, this);
+        getCommand("tpsbar").setExecutor(new mix.core.Command.TpsBar(this));
+        getCommand("pity").setExecutor(new mix.core.Command.Pity(this));
+        getCommand("pity").setTabCompleter(new PityTabCompleter());
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            new PlaceholderManager(this, wishingWellListener).register();
+        }
+
+        dataManager = new DataManager(this);
 
         Bukkit.getScheduler().runTask(this, () -> {
             World world = Bukkit.getWorld("spawn"); // Replace "s3" with the actual name of your world
@@ -47,6 +68,8 @@ public final class Main extends JavaPlugin {
             World world = Bukkit.getWorld("spawn"); // Replace "s3" with the actual name of your world
             spawnWheatOrb(world, 38, 179, -192);
         });
+
+        getDataManager().loadUserData();
     }
 
     @Override
@@ -54,6 +77,7 @@ public final class Main extends JavaPlugin {
         // Plugin shutdown logic
         removeCustomNameArmorStands();
         clearCacheFile();
+        getDataManager().saveUserData();
     }
 
     public void spawnWheatOrb(World world, double x, double y, double z) {
@@ -274,6 +298,10 @@ public final class Main extends JavaPlugin {
         }
         return null;
 
+    }
+
+    public DataManager getDataManager() {
+        return dataManager;
     }
 }
 
